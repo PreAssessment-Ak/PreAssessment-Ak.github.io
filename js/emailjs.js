@@ -5,7 +5,9 @@ const EMAILJS_TEMPLATE_ID = "template_fqdh9v8";
 const EMAILJS_PUBLIC_KEY = "DH3SsLlsCfb_wwMwc";
 
 if (window.emailjs) {
-  emailjs.init(EMAILJS_PUBLIC_KEY);
+  // @emailjs/browser v4 requires an options object, not a bare string —
+  // passing a string here silently sends an invalid/undefined public key.
+  emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
 }
 
 // Best-effort notification to Dana when a booking is made. Returns a
