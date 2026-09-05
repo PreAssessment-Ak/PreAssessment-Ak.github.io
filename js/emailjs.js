@@ -1,8 +1,8 @@
 // EmailJS notification setup.
 // Replace these with the real values from the EmailJS dashboard.
-const EMAILJS_SERVICE_ID = "YOUR_SERVICE_ID";
-const EMAILJS_TEMPLATE_ID = "YOUR_TEMPLATE_ID";
-const EMAILJS_PUBLIC_KEY = "YOUR_PUBLIC_KEY";
+const EMAILJS_SERVICE_ID = "service_ksv9fzi";
+const EMAILJS_TEMPLATE_ID = "template_fqdh9v8";
+const EMAILJS_PUBLIC_KEY = "DH3SsLlsCfb_wwMwc";
 
 if (window.emailjs) {
   emailjs.init(EMAILJS_PUBLIC_KEY);
