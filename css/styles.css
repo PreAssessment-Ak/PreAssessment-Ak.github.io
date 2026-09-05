@@ -1,0 +1,492 @@
+:root {
+  --color-primary: #4a7ba6;
+  --color-primary-dark: #375d80;
+  --color-secondary: #6fa88a;
+  --color-accent: #f2a65a;
+  --color-bg: #faf7f2;
+  --color-surface: #ffffff;
+  --color-text: #2e3a46;
+  --color-text-muted: #6b7a85;
+  --color-booked-bg: #c9cdd1;
+  --color-booked-text: #8a8f94;
+  --color-border: #e3ddd3;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+  --space-6: 48px;
+
+  --radius: 8px;
+  --radius-lg: 16px;
+
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-heading: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  --shadow-sm: 0 1px 3px rgba(46, 58, 70, 0.08);
+  --shadow-md: 0 10px 24px rgba(46, 58, 70, 0.12);
+  --transition: 150ms ease;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0 0 var(--space-2);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+p {
+  margin: 0 0 var(--space-3);
+}
+
+a {
+  color: var(--color-primary-dark);
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+.container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+/* Header / nav */
+
+.site-header {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.site-header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-3);
+  padding-bottom: var(--space-3);
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.site-logo {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  text-decoration: none;
+}
+
+.site-nav {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.site-nav a {
+  text-decoration: none;
+  color: var(--color-text);
+  font-weight: 600;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius);
+  transition: color var(--transition), background-color var(--transition);
+}
+
+.site-nav a.active,
+.site-nav a:hover {
+  color: var(--color-primary-dark);
+  background: #eef4f8;
+}
+
+/* Buttons */
+
+.btn {
+  display: inline-block;
+  border: none;
+  border-radius: var(--radius);
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  transition: background-color var(--transition), color var(--transition), box-shadow var(--transition), transform var(--transition);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  background: var(--color-accent);
+  color: #3a2a13;
+}
+
+.btn-primary:hover {
+  background: #e8954a;
+}
+
+.btn-secondary {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.btn-secondary:hover {
+  background: var(--color-primary-dark);
+}
+
+.btn:disabled {
+  background: var(--color-booked-bg);
+  color: var(--color-booked-text);
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Hero */
+
+.hero {
+  padding: var(--space-6) 0;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 2.25rem;
+  color: var(--color-primary-dark);
+}
+
+.hero p {
+  max-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
+  color: var(--color-text-muted);
+  font-size: 1.1rem;
+}
+
+/* How it works */
+
+.how-it-works {
+  padding: var(--space-6) 0;
+}
+
+.how-it-works-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  text-align: center;
+}
+
+.how-it-works-step {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+
+.how-it-works-step:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.how-it-works-step .step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-secondary);
+  color: #fff;
+  font-weight: 700;
+  margin-bottom: var(--space-2);
+}
+
+/* Subject pills */
+
+.subject-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  justify-content: center;
+}
+
+.subject-pill {
+  background: #eaf2ee;
+  color: var(--color-secondary);
+  border: 1px solid var(--color-secondary);
+  border-radius: 999px;
+  padding: var(--space-1) var(--space-3);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transition), color var(--transition), transform var(--transition);
+}
+
+.subject-pill:hover {
+  transform: translateY(-1px);
+}
+
+.subject-pill.active {
+  background: var(--color-secondary);
+  color: #fff;
+}
+
+/* Filter bar */
+
+.filter-bar {
+  padding: var(--space-4) 0 var(--space-2);
+}
+
+/* Tutor grid + cards */
+
+.tutors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-4);
+  padding: var(--space-4) 0 var(--space-6);
+}
+
+.tutor-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+
+.tutor-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
+}
+
+/* Pins the CTA to the bottom of every card regardless of how much content
+   (subject pills, bio length) sits above it, so buttons stay aligned across
+   a grid row even when card heights are stretched to match. */
+.tutor-card > .btn {
+  margin-top: auto;
+}
+
+.card-enter {
+  /* No "both"/"forwards" fill mode: once the entrance animation finishes,
+     the transform property must fall back to normal cascade rules so the
+     .tutor-card:hover lift below isn't permanently overridden. */
+  animation: cardFadeIn 220ms ease;
+}
+
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tutor-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.tutor-card-header img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+}
+
+.tutor-card h3 {
+  font-size: 1.1rem;
+}
+
+.tutor-meta {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.tutor-rate {
+  font-weight: 700;
+  color: var(--color-primary-dark);
+}
+
+.tutor-card .subject-pills {
+  justify-content: flex-start;
+}
+
+.tutor-card-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.slots-available {
+  font-size: 0.85rem;
+  color: var(--color-secondary);
+  font-weight: 600;
+}
+
+/* Booking page */
+
+.tutor-summary {
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+  box-shadow: var(--shadow-sm);
+}
+
+.tutor-summary img {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+}
+
+.slot-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: var(--space-3) 0 var(--space-4);
+}
+
+.slot-btn {
+  border: 1px solid var(--color-primary);
+  background: var(--color-surface);
+  color: var(--color-primary-dark);
+  border-radius: var(--radius);
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background-color var(--transition), color var(--transition), transform var(--transition), box-shadow var(--transition);
+}
+
+.slot-btn:not(:disabled):hover {
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.slot-btn.selected {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.slot-btn:disabled,
+.slot-btn.slot-booked {
+  background: var(--color-booked-bg);
+  color: var(--color-booked-text);
+  border-color: var(--color-booked-bg);
+  cursor: not-allowed;
+}
+
+.booking-form {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  max-width: 480px;
+  box-shadow: var(--shadow-sm);
+}
+
+.form-field {
+  margin-bottom: var(--space-3);
+}
+
+.form-field label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: var(--space-1);
+}
+
+.form-field input {
+  width: 100%;
+  padding: var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-family: var(--font-body);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.form-field input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(74, 123, 166, 0.15);
+}
+
+.confirmation {
+  background: #eaf2ee;
+  border: 1px solid var(--color-secondary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  animation: cardFadeIn 220ms ease;
+}
+
+.no-tutor-state {
+  text-align: center;
+  padding: var(--space-6) 0;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Footer */
+
+.site-footer {
+  padding: var(--space-4) 0;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+@media (min-width: 600px) {
+  .how-it-works-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
+  .tutors-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

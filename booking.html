@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book a Session — ABC Tutoring</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body data-page="booking">
+  <header class="site-header">
+    <div class="container">
+      <a class="site-logo" href="index.html">ABC Tutoring</a>
+      <nav class="site-nav">
+        <a href="index.html">Home</a>
+        <a href="tutors.html">Tutors</a>
+        <a href="booking.html" class="active">Book a Session</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="no-tutor-state" class="no-tutor-state hidden">
+      <h1>Please choose a tutor first</h1>
+      <p>Select a tutor from our listing page to see their availability and book a session.</p>
+      <a class="btn btn-primary" href="tutors.html">Browse Our Tutors</a>
+    </section>
+
+    <section id="booking-flow" class="hidden" style="padding: var(--space-4) 0 var(--space-6);">
+      <div class="tutor-summary" id="tutor-summary"></div>
+
+      <h2>Choose a time</h2>
+      <div class="slot-picker" id="slot-picker"></div>
+
+      <h2>Your information</h2>
+      <form class="booking-form" id="booking-form">
+        <div class="form-field">
+          <label for="parent-name">Your name</label>
+          <input type="text" id="parent-name" name="parent-name" required />
+        </div>
+        <div class="form-field">
+          <label for="parent-contact">Email or phone</label>
+          <input type="text" id="parent-contact" name="parent-contact" required />
+        </div>
+        <button type="submit" class="btn btn-primary" id="submit-btn" disabled>Confirm Booking</button>
+      </form>
+
+      <div class="confirmation hidden" id="confirmation"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      &copy; 2026 ABC Tutoring. Questions? Reach out to us directly — we're happy to help.
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="js/tutors.js"></script>
+  <script src="js/booking.js"></script>
+  <script src="js/posthog.js"></script>
+  <script src="js/emailjs.js"></script>
+  <script>
+    let selectedTutor = null;
+    let selectedSlot = null;
+
+    function getTutorIdFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const id = Number(params.get("tutor"));
+      return Number.isInteger(id) && id > 0 ? id : null;
+    }
+
+    function renderTutorSummary(tutor) {
+      const el = document.getElementById("tutor-summary");
+      el.innerHTML = `
+        <img src="${tutor.photo}" alt="Photo of ${tutor.name}" />
+        <div>
+          <h2>${tutor.name}</h2>
+          <div class="tutor-meta">${tutor.gradeLevels} &middot; $${tutor.rate}/hr</div>
+          <div class="subject-pills">
+            ${tutor.subjects.map((s) => `<span class="subject-pill">${s}</span>`).join("")}
+          </div>
+          <p>${tutor.bio}</p>
+        </div>
+      `;
+    }
+
+    function renderSlotPicker(tutor) {
+      const picker = document.getElementById("slot-picker");
+      picker.innerHTML = "";
+      tutor.availability.forEach((slot) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "slot-btn" + (slot.booked ? " slot-booked" : "");
+        btn.textContent = slot.booked ? `${slot.label} (Booked)` : slot.label;
+        btn.disabled = slot.booked;
+
+        if (!slot.booked) {
+          btn.addEventListener("click", () => {
+            selectedSlot = slot;
+            document
+              .querySelectorAll(".slot-btn")
+              .forEach((b) => b.classList.remove("selected"));
+            btn.classList.add("selected");
+            document.getElementById("submit-btn").disabled = false;
+            posthog.capture("booking_started", {
+              tutor_name: tutor.name,
+              slot_label: slot.label,
+            });
+          });
+        }
+
+        picker.appendChild(btn);
+      });
+    }
+
+    function showConfirmation({ tutorName, slotLabel }) {
+      document.getElementById("booking-form").classList.add("hidden");
+      document.getElementById("slot-picker").classList.add("hidden");
+      const confirmation = document.getElementById("confirmation");
+      confirmation.classList.remove("hidden");
+      confirmation.innerHTML = `
+        <h2>You're booked!</h2>
+        <p>${tutorName} — ${slotLabel}</p>
+        <p>We've sent your request to ABC Tutoring. You'll hear back soon to confirm the details.</p>
+      `;
+    }
+
+    function init() {
+      const tutorId = getTutorIdFromUrl();
+      const tutor = tutorId ? getMergedTutorById(tutorId) : null;
+
+      if (!tutor) {
+        document.getElementById("no-tutor-state").classList.remove("hidden");
+        return;
+      }
+
+      selectedTutor = tutor;
+      document.getElementById("booking-flow").classList.remove("hidden");
+      renderTutorSummary(tutor);
+      renderSlotPicker(tutor);
+
+      document.getElementById("booking-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (!selectedSlot) return;
+
+        const parentName = document.getElementById("parent-name").value.trim();
+        const parentContact = document.getElementById("parent-contact").value.trim();
+        if (!parentName || !parentContact) return;
+
+        const record = {
+          slotId: selectedSlot.id,
+          tutorId: selectedTutor.id,
+          tutorName: selectedTutor.name,
+          slotLabel: selectedSlot.label,
+          parentName,
+          parentContact,
+          bookedAt: new Date().toISOString(),
+        };
+
+        saveBooking(record);
+        showConfirmation({ tutorName: selectedTutor.name, slotLabel: selectedSlot.label });
+
+        posthog.capture("booking_completed", {
+          tutor_name: selectedTutor.name,
+          slot_label: selectedSlot.label,
+          parent_name: parentName,
+        });
+
+        sendBookingNotification({
+          tutorName: selectedTutor.name,
+          slotLabel: selectedSlot.label,
+          parentName,
+          parentContact,
+        }).catch((err) => console.error("EmailJS notification failed:", err));
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>

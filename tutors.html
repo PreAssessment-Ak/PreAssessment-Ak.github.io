@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Our Tutors — ABC Tutoring</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body data-page="tutors">
+  <header class="site-header">
+    <div class="container">
+      <a class="site-logo" href="index.html">ABC Tutoring</a>
+      <nav class="site-nav">
+        <a href="index.html">Home</a>
+        <a href="tutors.html" class="active">Tutors</a>
+        <a href="booking.html">Book a Session</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 style="margin-top: var(--space-4);">Meet Our Tutors</h1>
+    <p>Filter by subject or browse all six tutors below. Click a tutor to view their profile and book an available time.</p>
+
+    <div class="filter-bar">
+      <div class="subject-pills" id="filter-bar"></div>
+    </div>
+
+    <div class="tutors-grid" id="tutors-grid"></div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      &copy; 2026 ABC Tutoring. Questions? Reach out to us directly — we're happy to help.
+    </div>
+  </footer>
+
+  <script src="js/tutors.js"></script>
+  <script src="js/booking.js"></script>
+  <script src="js/posthog.js"></script>
+  <script>
+    let activeSubjectFilter = null;
+
+    function renderFilterBar() {
+      const bar = document.getElementById("filter-bar");
+      const allPill = document.createElement("span");
+      allPill.className = "subject-pill" + (activeSubjectFilter === null ? " active" : "");
+      allPill.textContent = "All Subjects";
+      allPill.addEventListener("click", () => {
+        activeSubjectFilter = null;
+        renderFilterBar();
+        renderTutorsGrid();
+      });
+      bar.innerHTML = "";
+      bar.appendChild(allPill);
+
+      SUBJECTS.forEach((subject) => {
+        const pill = document.createElement("span");
+        pill.className = "subject-pill" + (activeSubjectFilter === subject ? " active" : "");
+        pill.textContent = subject;
+        pill.addEventListener("click", () => {
+          posthog.capture("subject_clicked", { subject_name: subject });
+          activeSubjectFilter = subject;
+          renderFilterBar();
+          renderTutorsGrid();
+        });
+        bar.appendChild(pill);
+      });
+    }
+
+    function renderTutorCard(tutor) {
+      const card = document.createElement("article");
+      card.className = "tutor-card card-enter";
+
+      const availableCount = tutor.availability.filter((s) => !s.booked).length;
+
+      card.innerHTML = `
+        <div class="tutor-card-header">
+          <img src="${tutor.photo}" alt="Photo of ${tutor.name}" />
+          <div>
+            <h3>${tutor.name}</h3>
+            <div class="tutor-meta">${tutor.gradeLevels}</div>
+          </div>
+        </div>
+        <div class="subject-pills">
+          ${tutor.subjects.map((s) => `<span class="subject-pill in-card-pill" data-subject="${s}">${s}</span>`).join("")}
+        </div>
+        <div class="tutor-card-meta-row">
+          <div class="tutor-rate">$${tutor.rate}/hr</div>
+          <div class="slots-available">${availableCount > 0 ? `${availableCount} slot${availableCount === 1 ? "" : "s"} available` : "No slots available"}</div>
+        </div>
+        <a class="btn btn-secondary" href="booking.html?tutor=${tutor.id}">View Profile &amp; Book</a>
+      `;
+
+      card.querySelectorAll(".in-card-pill").forEach((pill) => {
+        pill.addEventListener("click", () => {
+          const subject = pill.getAttribute("data-subject");
+          posthog.capture("subject_clicked", { subject_name: subject });
+          activeSubjectFilter = subject;
+          renderFilterBar();
+          renderTutorsGrid();
+        });
+      });
+
+      card.querySelector(".btn-secondary").addEventListener("click", () => {
+        posthog.capture("tutor_profile_clicked", {
+          tutor_name: tutor.name,
+          tutor_subjects: tutor.subjects.join(", "),
+        });
+      });
+
+      return card;
+    }
+
+    function renderTutorsGrid() {
+      const grid = document.getElementById("tutors-grid");
+      grid.innerHTML = "";
+      const tutors = getMergedTutors().filter(
+        (t) => !activeSubjectFilter || t.subjects.includes(activeSubjectFilter)
+      );
+      tutors.forEach((tutor) => grid.appendChild(renderTutorCard(tutor)));
+    }
+
+    renderFilterBar();
+    renderTutorsGrid();
+  </script>
+</body>
+</html>
